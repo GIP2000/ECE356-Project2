@@ -87,8 +87,7 @@ int heap::deleteMin(std::string *pId, int *pKey , void *ppData ){
         switch(checkIfValid(i,key)){
             case 0: 
                 this->data[i] = bot; 
-                this->data[i].index = i; // idt I Need up update hashTable but I should check
-                
+                this->data[i].index = i; 
                 return 0;
             case 2: 
                 this->data[i] = this->data[i*2];
