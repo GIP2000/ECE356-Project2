@@ -25,7 +25,7 @@ int heap::insert(const std::string &id, int key, void *pv){
             return 0;
         }
         data[i] = data[i/2];
-        data[i].index/=2; 
+        data[i].index = i; 
     }
     return -1; // unexpected error should never occur; 
 
@@ -36,25 +36,29 @@ int heap::setKey(const std::string &id, int key){
     if(!found) return 1; 
 
     int i = item->index; 
-    item->key = key; 
+    void* pv = item->pv;
+
     while(true){
         switch(checkIfValid(i,key)){
             case 0: 
-                this->data[i].index = i; // idt I Need up update hashTable but I should check
+                this->data[i].id = id; 
+                this->data[i].key = key;  
+                this->data[i].index = i; 
+                this->data[i].pv = pv; 
                 return 0;
             case 1:
-                data[i] = data[i/2];
-                data[i].index/=2; 
+                this->data[i] = data[i/2];
+                this->data[i].index = i; 
                 i/=2; 
                 break;
             case 2: 
                 this->data[i] = this->data[i*2];
-                this->data[i].index*=2;
+                this->data[i].index = i; 
                 i*=2; 
                 break;
             case 3:
                 this->data[i] = this->data[i*2+1];
-                this->data[i].index=this->data[i].index*2+1;
+                this->data[i].index = i; 
                 i = i*2 +1; 
                 break;
         }
@@ -88,11 +92,11 @@ int heap::deleteMin(std::string *pId, int *pKey , void *ppData ){
                 return 0;
             case 2: 
                 this->data[i] = this->data[i*2];
-                this->data[i].index*=2;
+                this->data[i].index = i; 
                 break;
             case 3:
                 this->data[i] = this->data[i*2+1];
-                this->data[i].index=this->data[i].index*2+1;
+                this->data[i].index = i; 
                 addOne = true;
                 break;
         }
@@ -102,20 +106,20 @@ int heap::deleteMin(std::string *pId, int *pKey , void *ppData ){
     
 
 }
-int heap::remove(const std::string &id, int *pKey, void *ppData){
-    if(this->setKey(id,this->data[1].key-1) == 1) return 1;
-    return this->deleteMin(nullptr,pKey,ppData);  
+int heap::remove(const std::string &id, int *pKey, void *ppData){\
+    bool found = false; 
+    heapItem* item = (heapItem*)this->hashmap.getPointer(id,&found);
+    if(!found) return 1;
+    if(pKey != nullptr) *pKey = item->key; 
+    if(ppData != nullptr) ppData = item->pv; 
+    this->setKey(id,this->data[1].key-1); 
+    return this->deleteMin(nullptr);  
 }
 
-int heap::checkIfValid(int index, int key, bool print){
-    if(print) cout << "key = " << key << "\n"; 
+int heap::checkIfValid(int index, int key){
     int parentKey = this->data[index/2].key;
-    if(print)cout << "parentKey = " << parentKey << "\n"; 
     int leftChild = this->data[index*2].key;
-    if(print)cout << "leftChild = " << leftChild << "\n"; 
     int rightChild = this->data[index*2 +1].key;
-    if(print)cout << "rightChild = " << rightChild << "\n"; 
-
 
     if(index/2 > 0 && key < parentKey) return 1;
     if((index*2) <= this->lastIndex && key > leftChild && leftChild < rightChild) return 2;

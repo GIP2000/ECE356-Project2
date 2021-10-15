@@ -28,7 +28,7 @@ int hashTable::insert(const string &key, void *pv){
     if(wrap && index >= initalSpace) return 4; // no available space (should never happen if we rehash correctly)
     this->data[index].key = key;
     this->data[index].isOccupied = true; 
-    this->data[index].pv = pv; 
+    this->data[index].pv = pv;
     this->filled++; 
     return 0; 
 } 

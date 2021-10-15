@@ -67,12 +67,6 @@
     //
     int remove(const std::string &id, int *pKey = nullptr, void *ppData = nullptr);
 
-    void print(){
-      for(int i = 1; i<=this->lastIndex; i++){
-        std::cout << this->data[i].key << " = key\n"; 
-      }
-    }
-
     private:
 
     class heapItem{
@@ -97,5 +91,5 @@
     //  1 if it needs to move up
     //  2 if it needs to move down to the left 
     //  3 if it needs to move down to the right
-    int checkIfValid(int index, int key, bool print = false);
+    int checkIfValid(int index, int key);
   };

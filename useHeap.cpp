@@ -13,29 +13,61 @@
 
 using namespace std;
 
+int counter = 0; 
+template<class T> 
+void force(T input , T expectation, string message = "Invalid response"){
+  if (input != expectation){
+    cout << "Failure: " << message << "\ncounter: " << counter<< " expected: " << expectation << " revieved: " << input << "\n"; 
+    exit(-1); 
+  }
+  counter++; 
+}
+
+
 int main(){
   heap h = heap(500);
-  h.insert("string one",35);
-  h.insert("string two",55);
-  h.insert("string three",45);
-  h.insert("string four",5);
-  h.insert("string two",10);
-  h.insert("string five",80);
-  h.insert("string six",20);
-  h.insert("string seven",70);
+  force<int>(h.insert("string one",35),0, "Insert return failure 1");
+  force<int>(h.insert("string two",55),0, "Insert return failure 2");
+  force<int>(h.insert("string three",45),0, "Insert return failure 3");
+  force<int>(h.insert("string four",5),0, "Insert return failure 4");
+  force<int>(h.insert("string two",10),2, "Insert return unseccseful");
+  force<int>(h.insert("string five",80),0, "Insert return failure 5");
+  force<int>(h.insert("string six",20),0, "Insert return failure 6");
+  force<int>(h.insert("string seven",70),0, "Insert return failure 7");
   int key;
-  h.deleteMin(nullptr,&key);
-  cout << "key = " << key << "\n";
-  cout << "return = " << h.remove("string four",&key) << "\n"; 
-  cout << "key = " << key << "\n";
-  h.deleteMin(nullptr,&key);
-  cout << "key = " << key << "\n";
-  cout << "return = " << h.setKey("string one", 50);
-  h.remove("string two",&key);
-  cout << "key = " << key << "\n"; 
-  h.deleteMin(nullptr,&key);
-  cout << "key = " << key << "\n";
+  string id; 
+  force<int>(h.deleteMin(&id,&key),0);
+  force<int>(key,5, "Incorrect Key"); 
+  force<string>(id,"string four", "Incorrect id"); 
+  force<int>(h.remove("string four",&key),1); 
+  force<int>(h.deleteMin(&id,&key),0);
+  force<int>(key,20, "Incorrect Key"); 
+  force<string>(id,"string six", "Incorrect id");
+  force<int>(h.setKey("string one", 50),0);
+  force<int>(h.remove("string two",&key),0);
+  force<int>(key,55); // current error key is populated wrong but 
+  force<int>(h.deleteMin(&id,&key),0);
+  force<int>(key,45, "Incorrect Key"); 
+  force<string>(id,"string three", "Incorrect id");
+  force<int>(h.deleteMin(&id,&key),0);
+  force<int>(key,50, "Incorrect Key"); 
+  force<string>(id,"string one", "Incorrect ID"); 
+  force<int>(h.setKey("string five",60),0);
+  force<int>(h.deleteMin(&id,&key),0);
+  force<int>(key,60);
+  force<string>(id,"string five"); 
+  force<int>(h.deleteMin(&id,&key),0);
+  force<int>(key,70);
+  force<string>(id,"string seven"); 
+  force<int>(h.deleteMin(&id,&key),1);
+
+  cout << "Passed all tests\n"; 
 }
+
+
+
+
+
 
 // // Read an integer from standard input; if a non-integer is in the
 // // buffer, the state is fixed and the user is re-prompted;
