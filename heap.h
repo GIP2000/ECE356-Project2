@@ -68,15 +68,6 @@ class heap{
   //   1 if a node with the given id does not exist
   //
   int remove(const std::string &id, int *pKey = nullptr, void *ppData = nullptr);
-
-  void print(){
-    for(int i = 1; i<=lastIndex; i++){
-      std::cout << "HEAP --->    i = " << data[i].index << " key = " << data[i].key << " id = " << data[i].id << "\n"; 
-      heapItem* hi = (heapItem*)hashmap.getPointer(data[i].id);
-      std::cout << "MAP  --->    i = " << hi->index << " key = " << hi->key << " id = " << hi->id << "\n"; 
-    }
-  }
-
   
   private:
   class heapItem{

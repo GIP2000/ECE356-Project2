@@ -23,10 +23,9 @@ class utester {
   public:
     utester() = default;
     template<class T> 
-    void force(T input , T expectation, string message = "Invalid response",heap* h = nullptr  ){
+    void force(T input , T expectation, string message = "Invalid response"  ){
       if (input != expectation){
         cerr << "Failure: " << message << "\ncounter: " << counter<< " expected: " << expectation << " revieved: " << input << "\n"; 
-        if(h!= nullptr)h->print(); 
         exit(-1); 
       }
       counter++; 
@@ -79,21 +78,6 @@ void baseTest(){
   cout << "passed first test\n"; 
 }
 
-void test2(){
-  heap h(50); 
-  utester test;
-  FI(h.insert("string one", 1),0);
-  FI(h.insert("string two", 2),0);
-  FI(h.insert("string three", 3),0);
-  FI(h.insert("string four", 4),0);
-  
-  cout << "-----first--------\n";
-  h.print(); 
-  FI(h.insert("string five", -1),0);
-  cout << "-----second--------\n";
-  h.print(); 
-}
-
 void insertionSort(vector<int> &arr, int n)
 {
     int i, key, j;
@@ -114,13 +98,6 @@ void insertionSort(vector<int> &arr, int n)
     }
 }
 
-
-void printArrs(vector<int> arr1, vector<int> arr2){
-  for(int i = 0; i < arr1.size(); i++)
-    cout << arr1[i] << " - " << arr2[i] << "\n"; 
-}
-
-
 void testOnlyInsertAndDelteMin(int iterations){
   std::random_device rd;     
   std::mt19937 rng(rd());    
@@ -139,7 +116,6 @@ void testOnlyInsertAndDelteMin(int iterations){
   }
   vector<int> toBeSorted = sorted; 
   insertionSort(toBeSorted,iterations);
-  printArrs(sorted,toBeSorted);
   for(int i = 0; i<iterations;i++){
     FI(sorted[i],toBeSorted[i]); 
   }
@@ -152,8 +128,6 @@ int main(){
   baseTest(); 
   testOnlyInsertAndDelteMin(2000);
   cout << "Passed all tests\n"; 
-
-
 }
 
 
