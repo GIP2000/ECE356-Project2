@@ -13,7 +13,7 @@ hash.o: hash.cpp hash.h
 	g++ -c hash.cpp
 
 debug:
-	g++ -g -o spellDebug.out spellcheck.cpp hash.cpp
+	g++ -g -o useHeap.out useHeap.cpp hash.cpp heap.cpp
 
 clean:
 	rm -f *.out *.o *.stackdump *~

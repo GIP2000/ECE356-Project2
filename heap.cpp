@@ -26,6 +26,8 @@ int heap::insert(const std::string &id, int key, void *pv){
         }
         data[i] = data[i/2];
         data[i].index = i; 
+        this->hashmap.setPointer(data[i].id,&data[i]);
+
     }
     return -1; // unexpected error should never occur; 
 
@@ -48,17 +50,20 @@ int heap::setKey(const std::string &id, int key){
                 return 0;
             case 1:
                 this->data[i] = data[i/2];
-                this->data[i].index = i; 
+                this->data[i].index = i;
+                this->hashmap.setPointer(data[i].id,&data[i]); 
                 i/=2; 
                 break;
             case 2: 
                 this->data[i] = this->data[i*2];
                 this->data[i].index = i; 
+                this->hashmap.setPointer(data[i].id,&data[i]);
                 i*=2; 
                 break;
             case 3:
                 this->data[i] = this->data[i*2+1];
-                this->data[i].index = i; 
+                this->data[i].index = i;
+                this->hashmap.setPointer(data[i].id,&data[i]); 
                 i = i*2 +1; 
                 break;
         }
@@ -88,14 +93,17 @@ int heap::deleteMin(std::string *pId, int *pKey , void *ppData ){
             case 0: 
                 this->data[i] = bot; 
                 this->data[i].index = i; 
+                this->hashmap.setPointer(data[i].id,&data[i]);
                 return 0;
             case 2: 
                 this->data[i] = this->data[i*2];
                 this->data[i].index = i; 
+                this->hashmap.setPointer(data[i].id,&data[i]);
                 break;
             case 3:
                 this->data[i] = this->data[i*2+1];
                 this->data[i].index = i; 
+                this->hashmap.setPointer(data[i].id,&data[i]);
                 addOne = true;
                 break;
         }
@@ -116,12 +124,17 @@ int heap::remove(const std::string &id, int *pKey, void *ppData){\
 }
 
 int heap::checkIfValid(int index, int key){
-    int parentKey = this->data[index/2].key;
-    int leftChild = this->data[index*2].key;
-    int rightChild = this->data[index*2 +1].key;
+    int parentKey = this->data[index/2 > 0 ? index/2 : 0].key;
+    int leftChild = this->data[index*2 <= this->lastIndex ? index*2 : 0].key;
+    int rightChild = this->data[index*2 +1 <= this->lastIndex ? index*2 +1 : 0].key;
 
+    // if the parent index is valid and the key is less than the parent
     if(index/2 > 0 && key < parentKey) return 1;
-    if((index*2) <= this->lastIndex && key > leftChild && leftChild < rightChild) return 2;
+    
+    // if the left child index is valid and the key is less than the left child and if the right child index is valid the left child is also smaller than the right child
+    if((index*2) <= this->lastIndex && key > leftChild && leftChild < ((index*2 + 1) <= this->lastIndex ? rightChild:leftChild+1) ) return 2;
+
+    // if the right child index is valid and the key is less than the right child
     if((index*2 + 1) <= this->lastIndex && key > rightChild) return 3;
     return 0; 
 }

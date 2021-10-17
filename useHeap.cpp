@@ -8,64 +8,153 @@
 #include <iostream>
 #include <string>
 #include <cstdlib>
-
+#include <random> 
+#include <set>
+#include <functional>
 #include "heap.h"
+
+#define FORCE test.force
+#define FI test.force<int>
+#define FS test.force<string>
 
 using namespace std;
 
-int counter = 0; 
-template<class T> 
-void force(T input , T expectation, string message = "Invalid response"){
-  if (input != expectation){
-    cout << "Failure: " << message << "\ncounter: " << counter<< " expected: " << expectation << " revieved: " << input << "\n"; 
-    exit(-1); 
-  }
-  counter++; 
+class utester {
+  public:
+    utester() = default;
+    template<class T> 
+    void force(T input , T expectation, string message = "Invalid response",heap* h = nullptr  ){
+      if (input != expectation){
+        cerr << "Failure: " << message << "\ncounter: " << counter<< " expected: " << expectation << " revieved: " << input << "\n"; 
+        if(h!= nullptr)h->print(); 
+        exit(-1); 
+      }
+      counter++; 
+    }
+  private:
+    unsigned int counter = 1; 
+};
+
+
+
+void baseTest(){
+  heap h(5000); 
+  utester test; 
+  int counter = 0; 
+  FI(h.insert("string one",35),0, "Insert return failure 1");
+  FI(h.insert("string two",55),0, "Insert return failure 2");
+  FI(h.insert("string three",45),0, "Insert return failure 3");
+  FI(h.insert("string four",5),0, "Insert return failure 4");
+  FI(h.insert("string two",10),2, "Insert return unseccseful");
+  FI(h.insert("string five",80),0, "Insert return failure 5");
+  FI(h.insert("string six",20),0, "Insert return failure 6");
+  FI(h.insert("string seven",70),0, "Insert return failure 7");
+  int key;
+  string id; 
+  FI(h.deleteMin(&id,&key),0);
+  FI(key,5, "Incorrect Key"); 
+  FORCE<string>(id,"string four","Incorrect id"); 
+  FI(h.remove("string four",&key),1); 
+  FI(h.deleteMin(&id,&key),0);
+  FI(key,20,"Incorrect Key"); 
+  FORCE<string>(id,"string six", "Incorrect id");
+  FI(h.setKey("string one", 50),0);
+  FI(h.remove("string two",&key),0);
+  FI(key,55); 
+  FI(h.deleteMin(&id,&key),0);
+  FI(key,45,"Incorrect Key"); 
+  FORCE<string>(id,"string three","Incorrect id");
+  FI(h.deleteMin(&id,&key),0);
+  FI(key,50,"Incorrect Key"); 
+  FORCE<string>(id,"string one","Incorrect ID"); 
+  FI(h.setKey("string five",60),0);
+  FI(h.deleteMin(&id,&key),0);
+  FI(key,60);
+  FORCE<string>(id,"string five"); 
+  FI(h.deleteMin(&id,&key),0);
+  FI(key,70);
+  FORCE<string>(id,"string seven"); 
+  FI(h.deleteMin(&id,&key),1);
+
+  cout << "passed first test\n"; 
 }
+
+void test2(){
+  heap h(50); 
+  utester test;
+  FI(h.insert("string one", 1),0);
+  FI(h.insert("string two", 2),0);
+  FI(h.insert("string three", 3),0);
+  FI(h.insert("string four", 4),0);
+  
+  cout << "-----first--------\n";
+  h.print(); 
+  FI(h.insert("string five", -1),0);
+  cout << "-----second--------\n";
+  h.print(); 
+}
+
+void insertionSort(vector<int> &arr, int n)
+{
+    int i, key, j;
+    for (i = 1; i < n; i++)
+    {
+        key = arr[i];
+        j = i - 1;
+ 
+        /* Move elements of arr[0..i-1], that are
+        greater than key, to one position ahead
+        of their current position */
+        while (j >= 0 && arr[j] > key)
+        {
+            arr[j + 1] = arr[j];
+            j = j - 1;
+        }
+        arr[j + 1] = key;
+    }
+}
+
+
+void printArrs(vector<int> arr1, vector<int> arr2){
+  for(int i = 0; i < arr1.size(); i++)
+    cout << arr1[i] << " - " << arr2[i] << "\n"; 
+}
+
+
+void testOnlyInsertAndDelteMin(int iterations){
+  std::random_device rd;     
+  std::mt19937 rng(rd());    
+  std::uniform_int_distribution<int> uni(INT_MIN,INT_MAX); 
+  utester test; 
+  heap h(iterations); 
+  vector<int> sorted(iterations); 
+  for(int i = 0; i<iterations; i++){
+    int random_integer = uni(rng);
+    FI(h.insert("string " + to_string(i), random_integer),0);
+  }
+  for(int i = 0; i<iterations;i++){
+    int key; 
+    FI(h.deleteMin(nullptr,&key),0);
+    sorted[i] = key; 
+  }
+  vector<int> toBeSorted = sorted; 
+  insertionSort(toBeSorted,iterations);
+  printArrs(sorted,toBeSorted);
+  for(int i = 0; i<iterations;i++){
+    FI(sorted[i],toBeSorted[i]); 
+  }
+
+}
+
 
 
 int main(){
-  heap h = heap(500);
-  force<int>(h.insert("string one",35),0, "Insert return failure 1");
-  force<int>(h.insert("string two",55),0, "Insert return failure 2");
-  force<int>(h.insert("string three",45),0, "Insert return failure 3");
-  force<int>(h.insert("string four",5),0, "Insert return failure 4");
-  force<int>(h.insert("string two",10),2, "Insert return unseccseful");
-  force<int>(h.insert("string five",80),0, "Insert return failure 5");
-  force<int>(h.insert("string six",20),0, "Insert return failure 6");
-  force<int>(h.insert("string seven",70),0, "Insert return failure 7");
-  int key;
-  string id; 
-  force<int>(h.deleteMin(&id,&key),0);
-  force<int>(key,5, "Incorrect Key"); 
-  force<string>(id,"string four", "Incorrect id"); 
-  force<int>(h.remove("string four",&key),1); 
-  force<int>(h.deleteMin(&id,&key),0);
-  force<int>(key,20, "Incorrect Key"); 
-  force<string>(id,"string six", "Incorrect id");
-  force<int>(h.setKey("string one", 50),0);
-  force<int>(h.remove("string two",&key),0);
-  force<int>(key,55); // current error key is populated wrong but 
-  force<int>(h.deleteMin(&id,&key),0);
-  force<int>(key,45, "Incorrect Key"); 
-  force<string>(id,"string three", "Incorrect id");
-  force<int>(h.deleteMin(&id,&key),0);
-  force<int>(key,50, "Incorrect Key"); 
-  force<string>(id,"string one", "Incorrect ID"); 
-  force<int>(h.setKey("string five",60),0);
-  force<int>(h.deleteMin(&id,&key),0);
-  force<int>(key,60);
-  force<string>(id,"string five"); 
-  force<int>(h.deleteMin(&id,&key),0);
-  force<int>(key,70);
-  force<string>(id,"string seven"); 
-  force<int>(h.deleteMin(&id,&key),1);
-
+  baseTest(); 
+  testOnlyInsertAndDelteMin(2000);
   cout << "Passed all tests\n"; 
+
+
 }
-
-
-
 
 
 
